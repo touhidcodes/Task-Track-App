@@ -6,7 +6,7 @@ export const assignmentApi = baseApi.injectEndpoints({
     // Get all assignments
     getAllAssignments: build.query({
       query: () => ({
-        url: "/assignments",
+        url: "/assignments/all",
         method: "GET",
       }),
       providesTags: [tagTypes.assignment],
