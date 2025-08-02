@@ -20,6 +20,13 @@ export const assignmentApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.assignment],
     }),
+    getInstructorAssignments: build.query({
+      query: (queryParams) => ({
+        url: `/assignments/instructor?${queryParams}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.assignment],
+    }),
 
     // Create new assignment
     createAssignment: build.mutation({
@@ -55,6 +62,7 @@ export const assignmentApi = baseApi.injectEndpoints({
 export const {
   useGetAllAssignmentsQuery,
   useGetSingleAssignmentQuery,
+  useGetInstructorAssignmentsQuery,
   useCreateAssignmentMutation,
   useUpdateAssignmentMutation,
   useDeleteAssignmentMutation,

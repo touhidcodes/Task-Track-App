@@ -31,7 +31,7 @@ instance.interceptors.request.use(
     const session = await getSession();
 
     if (session?.accessToken) {
-      config.headers.Authorization = session.accessToken;
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
     }
     return config;
   },

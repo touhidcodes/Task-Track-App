@@ -33,12 +33,12 @@ const CreateAssignmentPage = () => {
         deadline: new Date(values.deadline).toISOString(),
       };
 
-      console.log(assignmentData);
       const res = await createAssignment(assignmentData);
+      console.log(res);
 
-      if (res?.data?.id) {
+      if (res?.data?.data?.id) {
         toast.success("Assignment created successfully!");
-        router.push("/assignments");
+        router.push("/dashboard/instructor/assignments");
       } else {
         toast.error("Failed to create assignment");
       }

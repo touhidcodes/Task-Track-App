@@ -22,6 +22,8 @@ const routeConfig = {
   roleBasedRoutes: {
     INSTRUCTOR: [
       "/dashboard/instructor",
+      "/dashboard/instructor/assignments",
+      "/dashboard/instructor/assignments/add",
       "/dashboard/instructor/courses",
       "/dashboard/instructor/students",
       "/dashboard/instructor/analytics",
