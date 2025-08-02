@@ -4,13 +4,10 @@ import { useState } from "react";
 import { Menu, Bell, UserCircle2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  useGetSingleUserQuery,
-  useGetUserWithProfileQuery,
-} from "@/redux/api/userApi";
 import SideBar from "../SideBar/SideBar";
 import clsx from "clsx";
 import AuthButton from "@/components/custom/Button/AuthButton";
+import { useSession } from "next-auth/react"; // import useSession
 
 const drawerWidth = 300;
 
@@ -20,10 +17,14 @@ export default function DashboardDrawer({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: userData, isLoading } = useGetSingleUserQuery({});
-  const { data: userProfile } = useGetUserWithProfileQuery({});
   const placeholder =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUOdfo4lewXJYT_2xPo_Xu2Lj6XPn78X9UJA&s";
+
+  // Get session data
+  const { data: session, status } = useSession();
+
+  const isLoading = status === "loading";
+  const userData = session?.user;
 
   return (
     <div className="flex min-h-screen bg-[#EBF0F4]">
@@ -77,7 +78,10 @@ export default function DashboardDrawer({
           <div className="flex-1 flex justify-between items-center">
             <div className="ml-2">
               <p className="text-sm text-muted-foreground">
-                Hi, {isLoading ? "Loading..." : userData?.username}
+                Hi,{" "}
+                {isLoading
+                  ? "Loading..."
+                  : userData?.name || userData?.email || "User"}
               </p>
               <h1 className="text-xl font-semibold text-[#00026E]">
                 Welcome to Task Track
@@ -91,7 +95,7 @@ export default function DashboardDrawer({
               </Button>
 
               <Avatar>
-                <AvatarImage src={userProfile?.image || placeholder} />
+                <AvatarImage src={placeholder} />
                 <AvatarFallback>
                   <UserCircle2 className="h-5 w-5" />
                 </AvatarFallback>

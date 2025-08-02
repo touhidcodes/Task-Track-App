@@ -24,7 +24,7 @@ const routeConfig = {
       "/dashboard/instructor",
       "/dashboard/instructor/assignments",
       "/dashboard/instructor/assignments/add",
-      "/dashboard/instructor/courses",
+      "/dashboard/instructor/submissions",
       "/dashboard/instructor/students",
       "/dashboard/instructor/analytics",
       "/dashboard/instructor/settings",

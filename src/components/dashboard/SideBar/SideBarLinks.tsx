@@ -7,6 +7,7 @@ import {
   Star,
   KeyRound,
   FileText,
+  Home,
 } from "lucide-react";
 
 export const USER_ROLE = {
@@ -27,29 +28,6 @@ type SidebarGroup = {
 };
 
 export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
-  const defaultItems: SidebarGroup[] = [
-    {
-      section: "Profile",
-      items: [
-        {
-          label: "Profile",
-          href: "/dashboard/profile",
-          icon: PersonStanding,
-        },
-      ],
-    },
-    {
-      section: "Settings",
-      items: [
-        {
-          label: "Change Password",
-          href: "/dashboard/change-password",
-          icon: KeyRound,
-        },
-      ],
-    },
-  ];
-
   switch (role) {
     case USER_ROLE.INSTRUCTOR:
       return [
@@ -59,7 +37,7 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
             {
               label: "Home",
               href: "/dashboard/instructor/overview",
-              icon: LayoutDashboard,
+              icon: Home,
             },
           ],
         },
@@ -72,18 +50,17 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
               icon: FileText,
             },
             {
+              label: "Create Assignments",
+              href: "/dashboard/instructor/assignments/add",
+              icon: FileText,
+            },
+            {
               label: "Submissions",
               href: "/dashboard/instructor/submissions",
               icon: ShoppingCart,
             },
-            {
-              label: "Students",
-              href: "/dashboard/instructor/students",
-              icon: Users,
-            },
           ],
         },
-        ...defaultItems,
       ];
 
     case USER_ROLE.STUDENT:
@@ -94,7 +71,7 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
             {
               label: "Home",
               href: "/dashboard/student/overview",
-              icon: LayoutDashboard,
+              icon: Home,
             },
           ],
         },
@@ -111,17 +88,8 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
               href: "/dashboard/student/submissions",
               icon: ShoppingCart,
             },
-            {
-              label: "Grades",
-              href: "/dashboard/student/grades",
-              icon: Star,
-            },
           ],
         },
-        ...defaultItems,
       ];
-
-    default:
-      return defaultItems;
   }
 };

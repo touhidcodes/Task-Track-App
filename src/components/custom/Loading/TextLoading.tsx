@@ -5,7 +5,7 @@ const TextLoading = () => {
     <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center">
       <div className="text-2xl md:text-4xl font-bold text-gray-800 animate-pulse">
         <span className="inline-block animate-slideUpFade">
-          APARTSOL
+          Task Track
           <span className="animate-bounceDots inline-block ml-1">...</span>
         </span>
       </div>

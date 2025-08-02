@@ -5,26 +5,26 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut } from "lucide-react";
-import { useUserInfo } from "@/hooks/useUserInfo";
-import { userLogout } from "@/services/actions/logoutUser";
+import { useSession, signOut } from "next-auth/react";
 import TextLoading from "../Loading/TextLoading";
 
 const AuthButton = () => {
   const router = useRouter();
-  const { user, loading } = useUserInfo();
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogOut = async () => {
     setIsLoggingOut(true);
-    await userLogout();
+    await signOut({ redirect: false });
     router.push("/auth");
   };
 
-  if (isLoggingOut) {
+  if (isLoggingOut || loading) {
     return <TextLoading />;
   }
 
-  return user ? (
+  return session?.user ? (
     <Button
       onClick={handleLogOut}
       variant="outline"
