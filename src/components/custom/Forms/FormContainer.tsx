@@ -4,38 +4,39 @@ import {
   FieldValues,
   SubmitHandler,
   Resolver,
+  UseFormProps,
 } from "react-hook-form";
 
-type TFormConfig = {
-  resolver?: Resolver<FieldValues>;
-  defaultValues?: Record<string, unknown>;
+type TFormConfig<TFormValues extends FieldValues> = {
+  resolver?: Resolver<TFormValues>;
+  defaultValues?: UseFormProps<TFormValues>["defaultValues"];
 };
 
-type TFormProps = {
+type TFormProps<TFormValues extends FieldValues> = {
   children: React.ReactNode;
-  onSubmit: SubmitHandler<FieldValues>;
-} & TFormConfig;
+  onSubmit: SubmitHandler<TFormValues>;
+} & TFormConfig<TFormValues>;
 
-const FormContainer = ({
+const FormContainer = <TFormValues extends FieldValues = FieldValues>({
   children,
   onSubmit,
   resolver,
   defaultValues,
-}: TFormProps) => {
-  const formConfig: TFormConfig = {};
+}: TFormProps<TFormValues>) => {
+  const formConfig: TFormConfig<TFormValues> = {};
 
   if (resolver) {
-    formConfig.resolver = resolver as Resolver<FieldValues>;
+    formConfig.resolver = resolver;
   }
 
   if (defaultValues) {
     formConfig.defaultValues = defaultValues;
   }
 
-  const methods = useForm(formConfig);
+  const methods = useForm<TFormValues>(formConfig);
   const { handleSubmit, reset } = methods;
 
-  const submit: SubmitHandler<FieldValues> = (data) => {
+  const submit: SubmitHandler<TFormValues> = (data) => {
     onSubmit(data);
     reset();
   };

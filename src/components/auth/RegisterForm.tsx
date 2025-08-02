@@ -10,10 +10,13 @@ import { Loader2 } from "lucide-react";
 import FormContainer from "../custom/Forms/FormContainer";
 import FormInput from "../custom/Forms/FormInput";
 import FormSelect from "../custom/Forms/FormSelect";
+import {
+  TRegisterFormValues,
+  registerValidationSchema,
+} from "@/schema/authSchema";
 
 interface RegisterFormProps {
-  onSubmit: (values: FieldValues) => void;
-  schema: z.ZodSchema;
+  onSubmit: (values: TRegisterFormValues) => void;
   error?: string;
   toggle: () => void;
   loading: boolean;
@@ -21,7 +24,6 @@ interface RegisterFormProps {
 
 const RegisterForm = ({
   onSubmit,
-  schema,
   error,
   toggle,
   loading,
@@ -30,21 +32,26 @@ const RegisterForm = ({
     <div className="w-full max-w-sm space-y-5">
       <div className="text-left">
         <h2 className="text-2xl font-semibold text-gray-800">
-          Welcome to ApartSol!
+          Welcome to Task Track
           <br />
           <span>Create your account</span>
         </h2>
         <p className="text-sm text-gray-500 mt-2">
-          Register to enjoy all features of ApartSol
+          Register to enjoy all features of Task Track
         </p>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <FormContainer
+      <FormContainer<TRegisterFormValues>
         onSubmit={onSubmit}
-        resolver={zodResolver(schema)}
-        defaultValues={{ username: "", email: "", role: "", password: "" }}
+        resolver={zodResolver(registerValidationSchema)}
+        defaultValues={{
+          username: "",
+          email: "",
+          role: "" as "INSTRUCTOR" | "STUDENT",
+          password: "",
+        }}
       >
         <div className="space-y-4">
           <FormInput name="username" label="Username" type="text" required />

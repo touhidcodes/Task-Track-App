@@ -7,6 +7,8 @@ export const loginValidationSchema = z.object({
   password: z.string().min(8, "Must be at least 8 characters"),
 });
 
+export type TLoginFormValues = z.infer<typeof loginValidationSchema>;
+
 export const registerValidationSchema = z.object({
   username: z
     .string()
@@ -16,3 +18,5 @@ export const registerValidationSchema = z.object({
   role: z.enum(["INSTRUCTOR", "STUDENT"]),
   password: z.string().min(8, "Must be at least 8 characters"),
 });
+
+export type TRegisterFormValues = z.infer<typeof registerValidationSchema>;

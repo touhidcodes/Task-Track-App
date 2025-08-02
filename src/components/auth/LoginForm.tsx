@@ -9,19 +9,18 @@ import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import FormContainer from "../custom/Forms/FormContainer";
 import FormInput from "../custom/Forms/FormInput";
+import { loginValidationSchema, TLoginFormValues } from "@/schema/authSchema";
 
 interface LoginFormProps {
-  onSubmit: (values: FieldValues) => void;
-  schema: z.ZodSchema;
+  onSubmit: (values: TLoginFormValues) => void;
   error?: string;
   toggle: () => void;
-  onTestLogin: (type: "user" | "admin") => void;
+  onTestLogin: (type: "instructor" | "student") => void;
   loading: boolean;
 }
 
 const LoginForm = ({
   onSubmit,
-  schema,
   error,
   toggle,
   onTestLogin,
@@ -31,9 +30,9 @@ const LoginForm = ({
     <div className="w-full max-w-sm space-y-5">
       <div className="text-left">
         <h2 className="text-2xl font-semibold text-gray-800">
-          Welcome Back to ApartSol!
+          Welcome Back to Task Track!
           <br />
-          <span>Your Living Solutions</span>
+          <span>Submit Your Assignments</span>
         </h2>
         <p className="text-sm text-gray-500 mt-2">Sign in to your account</p>
       </div>
@@ -42,7 +41,7 @@ const LoginForm = ({
 
       <FormContainer
         onSubmit={onSubmit}
-        resolver={zodResolver(schema)}
+        resolver={zodResolver(loginValidationSchema)}
         defaultValues={{ identifier: "", password: "" }}
       >
         <div className="space-y-4">
@@ -85,7 +84,7 @@ const LoginForm = ({
         <Button
           variant="outline"
           className="bg-transparent border-slate-600 hover:bg-slate-800 hover:text-white hover:border-white rounded-full px-6 py-2 font-medium transition-all duration-200 group"
-          onClick={() => onTestLogin("user")}
+          onClick={() => onTestLogin("instructor")}
         >
           User Login
           <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -93,7 +92,7 @@ const LoginForm = ({
         <Button
           variant="outline"
           className="bg-transparent border-slate-600 hover:bg-slate-800 hover:text-white hover:border-white rounded-full px-6 py-2 font-medium transition-all duration-200 group"
-          onClick={() => onTestLogin("admin")}
+          onClick={() => onTestLogin("student")}
         >
           Admin Login
           <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

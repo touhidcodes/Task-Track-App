@@ -77,9 +77,9 @@ const LoginPage = () => {
     }
   };
 
-  const handleTestLogin = async (role: "admin" | "user") => {
+  const handleTestLogin = async (role: "instructor" | "student") => {
     const credentials =
-      role === "admin"
+      role === "instructor"
         ? {
             identifier: `${process.env.NEXT_PUBLIC_ADMIN_EMAIL}`,
             password: `${process.env.NEXT_PUBLIC_ADMIN_PASSWORD}`,
@@ -98,7 +98,6 @@ const LoginPage = () => {
         {isLogin ? (
           <LoginForm
             onSubmit={handleLogin}
-            schema={loginValidationSchema}
             error={error}
             toggle={toggleForm}
             onTestLogin={handleTestLogin}
@@ -107,7 +106,6 @@ const LoginPage = () => {
         ) : (
           <RegisterForm
             onSubmit={handleRegister}
-            schema={registerValidationSchema}
             error={error}
             toggle={toggleForm}
             loading={loading}
