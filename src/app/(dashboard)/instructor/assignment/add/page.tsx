@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { FieldValues } from "react-hook-form";
-// import { useCreateAssignmentMutation } from "@/redux/api/assignmentsApi";
+
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FormContainer from "@/components/custom/Forms/FormContainer";
@@ -16,36 +16,38 @@ import {
   createAssignmentSchema,
   TCreateAssignmentInput,
 } from "@/schema/assignmentSchema";
+import { useCreateAssignmentMutation } from "@/redux/api/assignmentsApi";
 
 const CreateAssignmentPage = () => {
   const [loading, setLoading] = useState(false);
-  //   const [createAssignment] = useCreateAssignmentMutation();
+  const [createAssignment] = useCreateAssignmentMutation();
   const router = useRouter();
 
   const handleCreate = async (values: FieldValues) => {
     console.log(values);
-    // try {
-    //   setLoading(true);
+    try {
+      setLoading(true);
 
-    //   const payload = {
-    //     ...values,
-    //     deadline: new Date(values.deadline).toISOString(),
-    //   };
+      const assignmentData = {
+        ...values,
+        deadline: new Date(values.deadline).toISOString(),
+      };
 
-    //   const res = await createAssignment(payload);
+      console.log(assignmentData);
+      const res = await createAssignment(assignmentData);
 
-    //   if (res?.data?.id) {
-    //     toast.success("Assignment created successfully!");
-    //     router.push("/assignments");
-    //   } else {
-    //     toast.error("Failed to create assignment");
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("Something went wrong!");
-    // } finally {
-    //   setLoading(false);
-    // }
+      if (res?.data?.id) {
+        toast.success("Assignment created successfully!");
+        router.push("/assignments");
+      } else {
+        toast.error("Failed to create assignment");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
