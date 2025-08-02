@@ -2,9 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues } from "react-hook-form";
 import Link from "next/link";
-import { z } from "zod";
 
 import { Loader2 } from "lucide-react";
 import FormContainer from "../custom/Forms/FormContainer";

@@ -1,11 +1,8 @@
-// components/Auth/LoginForm.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues } from "react-hook-form";
 import Link from "next/link";
-import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
 import FormContainer from "../custom/Forms/FormContainer";
 import FormInput from "../custom/Forms/FormInput";
@@ -86,7 +83,7 @@ const LoginForm = ({
           className="bg-transparent border-slate-600 hover:bg-slate-800 hover:text-white hover:border-white rounded-full px-6 py-2 font-medium transition-all duration-200 group"
           onClick={() => onTestLogin("instructor")}
         >
-          User Login
+          Instructor Login
           <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Button>
         <Button
@@ -94,7 +91,7 @@ const LoginForm = ({
           className="bg-transparent border-slate-600 hover:bg-slate-800 hover:text-white hover:border-white rounded-full px-6 py-2 font-medium transition-all duration-200 group"
           onClick={() => onTestLogin("student")}
         >
-          Admin Login
+          Student Login
           <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Button>
       </div>

@@ -1,6 +1,5 @@
 import axios from "axios";
-import { getCookie, setCookie } from "@/utils/nextCookies";
-import { getNewAccessToken } from "@/services/authServices";
+import { getSession, signOut } from "next-auth/react";
 
 // Create Axios instance
 const instance = axios.create({
@@ -28,10 +27,11 @@ const onRefreshed = (token: string) => {
 // === Request Interceptor ===
 instance.interceptors.request.use(
   async (config) => {
-    const accessToken = await getCookie("accessToken");
+    // Get session from NextAuth instead of cookies
+    const session = await getSession();
 
-    if (accessToken) {
-      config.headers.Authorization = accessToken?.value;
+    if (session?.accessToken) {
+      config.headers.Authorization = session.accessToken;
     }
     return config;
   },
@@ -44,30 +44,44 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error?.response?.status === 500 && !originalRequest._retry) {
+    // Check for 401 (Unauthorized) instead of 500
+    if (error?.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       if (!isRefreshing) {
         isRefreshing = true;
-        try {
-          const res = await getNewAccessToken();
-          const newToken = res?.data?.accessToken;
 
-          if (newToken) {
-            await setCookie("refreshToken", newToken);
-            onRefreshed(newToken);
+        try {
+          // Try to refresh the session
+          const session = await getSession();
+
+          if (session?.error === "RefreshAccessTokenError") {
+            // If refresh failed, sign out the user
+            await signOut({ callbackUrl: "/auth" });
+            return Promise.reject(error);
+          }
+
+          // If we have a valid session, retry the request
+          if (session?.accessToken) {
+            onRefreshed(session.accessToken);
             isRefreshing = false;
+
+            // Retry the original request
+            originalRequest.headers.Authorization = `Bearer ${session.accessToken}`;
+            return instance(originalRequest);
           }
         } catch (err) {
           isRefreshing = false;
           console.error("Token refresh failed:", err);
+          await signOut({ callbackUrl: "/auth" });
           return Promise.reject(err);
         }
       }
 
-      return new Promise((resolve) => {
+      // If already refreshing, wait for it to complete
+      return new Promise((resolve, reject) => {
         subscribeTokenRefresh((newAccessToken) => {
-          originalRequest.headers.Authorization = newAccessToken;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           resolve(instance(originalRequest));
         });
       });
