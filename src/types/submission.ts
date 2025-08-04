@@ -13,7 +13,7 @@ export interface TSubmissionWithStudent {
   id: string;
   submissionUrl: string;
   note?: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
   feedback?: string;
   createdAt: string;
   updatedAt?: string;

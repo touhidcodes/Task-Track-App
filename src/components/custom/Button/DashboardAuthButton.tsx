@@ -1,20 +1,25 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { userLogout } from "@/services/actions/logoutUser";
-import { useUserInfo } from "@/hooks/useUserInfo";
+import { signOut } from "next-auth/react"; // <--- import signOut here
 import TextLoading from "../Loading/TextLoading";
 
 const DashboardAuthButton = () => {
   const router = useRouter();
-  const userInfo = useUserInfo();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogOut = async () => {
     setIsLoggingOut(true);
-    await userLogout();
-    router.push("/");
+    try {
+      await signOut({ redirect: false });
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed", error);
+      setIsLoggingOut(false);
+    }
   };
 
   if (isLoggingOut) {

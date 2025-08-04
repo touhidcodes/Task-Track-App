@@ -68,7 +68,7 @@ export default function Sidebar({ isCollapsed, onClose }: SidebarProps) {
           {!isCollapsed ? (
             <>
               <Link href="/" className="text-lg font-semibold">
-                APARTSOL
+                Task Track
               </Link>
               <div className="relative flex items-center gap-3">
                 <Link href="/dashboard/messages">

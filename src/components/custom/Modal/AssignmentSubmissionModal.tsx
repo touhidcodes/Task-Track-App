@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FieldValues } from "react-hook-form";
-import { toast } from "sonner";
+
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ interface TSubmissionModalProps {
   assignmentTitle: string;
   onClose: () => void;
   onSubmit: (submissionData: FieldValues) => void;
+  loading: boolean;
 }
 
 const AssignmentSubmissionModal = ({
@@ -29,25 +30,18 @@ const AssignmentSubmissionModal = ({
   assignmentTitle,
   onClose,
   onSubmit,
+  loading,
 }: TSubmissionModalProps) => {
-  const [loading, setLoading] = useState(false);
+  const handleSubmitAssignment = (values: FieldValues) => {
+    const submissionData = {
+      assignmentId,
+      submissionUrl: values.submissionUrl,
+      note: values.note || "",
+    };
+    onSubmit(submissionData);
 
-  const handleSubmitAssignment = async (values: FieldValues) => {
-    try {
-      setLoading(true);
-      const submissionData = {
-        assignmentId,
-        submissionUrl: values.submissionUrl,
-        note: values.note || "",
-      };
-
-      await onSubmit(submissionData);
-      toast.success("Assignment submitted successfully!");
+    if (!loading) {
       onClose();
-    } catch (error) {
-      toast.error("Failed to submit assignment.");
-    } finally {
-      setLoading(false);
     }
   };
 

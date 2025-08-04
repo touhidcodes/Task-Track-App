@@ -112,12 +112,12 @@ const InstructorAssignmentsPage = () => {
     assignmentId: string
   ) => {
     try {
-      const payload = {
+      const updatedData = {
         ...updatedAssignment,
         deadline: new Date(updatedAssignment.deadline).toISOString(),
       };
 
-      const res = await updateAssignment({ assignmentId, payload });
+      const res = await updateAssignment({ assignmentId, updatedData });
       if (res?.data?.id) toast.success("Assignment updated successfully!");
     } catch (err) {
       console.error(err);

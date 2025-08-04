@@ -8,6 +8,8 @@ import {
   KeyRound,
   FileText,
   Home,
+  FilePlus,
+  Send,
 } from "lucide-react";
 
 export const USER_ROLE = {
@@ -52,12 +54,12 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
             {
               label: "Create Assignments",
               href: "/dashboard/instructor/assignments/add",
-              icon: FileText,
+              icon: FilePlus,
             },
             {
               label: "Submissions",
               href: "/dashboard/instructor/submissions",
-              icon: ShoppingCart,
+              icon: Send,
             },
           ],
         },
@@ -79,14 +81,9 @@ export const getSidebarLinks = (role: TUserRole): SidebarGroup[] => {
           section: "My Activity",
           items: [
             {
-              label: "Assignments",
-              href: "/dashboard/student/assignments",
-              icon: FileText,
-            },
-            {
               label: "Submissions",
               href: "/dashboard/student/submissions",
-              icon: ShoppingCart,
+              icon: Send,
             },
           ],
         },

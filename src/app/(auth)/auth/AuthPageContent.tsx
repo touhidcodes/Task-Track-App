@@ -42,13 +42,8 @@ const AuthPage = () => {
         const session = await getSession();
 
         if (session?.user?.role) {
-          const redirectUrl =
-            session.user.role === "INSTRUCTOR"
-              ? "/dashboard/instructor/overview"
-              : "/dashboard/student/overview";
-
           toast.success("Login successful!");
-          router.push(redirectUrl);
+          router.push("/");
           return;
         } else {
           toast.error("Unable to determine user role");

@@ -4,37 +4,20 @@ import { getToken } from "next-auth/jwt";
 
 // Define route configurations
 const routeConfig = {
-  // Public routes - no authentication required
-  publicRoutes: ["/", "/auth", "/about", "/contact", "/terms", "/privacy"],
+  publicRoutes: ["/", "/auth", "/about"],
 
   // Role-based routes
   roleBasedRoutes: {
     INSTRUCTOR: [
-      "/dashboard/instructor",
-      "/courses/create",
-      "/courses/edit",
-      "/courses/manage",
+      "/dashboard/instructor/overview",
+      "/dashboard/instructor/submissions",
+      "/dashboard/instructor/assignments",
+      "/dashboard/instructor/assignments/add",
     ],
-    STUDENT: [
-      "/dashboard/student",
-      "/courses/enrolled",
-      "/courses/browse",
-      "/booking",
-      "/checkout",
-      "/review",
-    ],
+    STUDENT: ["/dashboard/student/overview", "/dashboard/student/submissions"],
   },
 
-  // Shared routes - accessible by multiple roles
-  sharedRoutes: [
-    "/assignments",
-    "/settings",
-    "/notifications",
-    "/courses/view",
-    "/messages",
-    "/help",
-    "/support",
-  ],
+  sharedRoutes: ["/assignments"],
 };
 
 export async function middleware(req: NextRequest) {

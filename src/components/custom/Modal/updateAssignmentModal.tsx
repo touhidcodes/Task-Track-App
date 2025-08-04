@@ -16,6 +16,7 @@ import FormInput from "../Forms/FormInput";
 import FormTextarea from "../Forms/FormTextarea";
 import FormSelect from "../Forms/FormSelect";
 import { TAssignment } from "@/types/assignment";
+import FormDateTimePicker from "../Forms/FormDateTimePicker";
 
 interface TUpdateAssignmentModalProps {
   open: boolean;
@@ -60,7 +61,7 @@ const UpdateAssignmentModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-lg w-full max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>Update Assignment</DialogTitle>
         </DialogHeader>
@@ -87,12 +88,7 @@ const UpdateAssignmentModal = ({
                 placeholder="Assignment title"
                 required
               />
-              <FormInput
-                type="datetime-local"
-                label="Deadline"
-                name="deadline"
-                required
-              />
+              <FormDateTimePicker label="Deadline" name="deadline" required />
             </div>
 
             <div className="grid grid-cols-1 gap-6 mt-4">

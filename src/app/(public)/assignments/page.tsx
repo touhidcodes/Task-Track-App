@@ -18,13 +18,18 @@ import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import AssignmentSubmissionModal from "@/components/custom/Modal/AssignmentSubmissionModal";
 import { useCreateSubmissionMutation } from "@/redux/api/submissionApi";
+import { useSession } from "next-auth/react";
 
 export default function AssignmentPage() {
+  const { data: session } = useSession();
+  const userRole = session?.user?.role;
+  const isInstructor = userRole === "INSTRUCTOR";
   const { data, isLoading } = useGetAllAssignmentsQuery({});
   const [createSubmission] = useCreateSubmissionMutation();
   const assignments = data?.data || [];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
 
   if (isLoading) {
@@ -108,13 +113,19 @@ export default function AssignmentPage() {
 
   const handleSubmitAssignment = async (submissionData: FieldValues) => {
     try {
-      console.log(submissionData);
+      setLoading(true);
       const res = await createSubmission(submissionData);
       console.log(res);
-    } catch (error: any) {
-      console.error("Submission error:", error);
-      toast.error(error?.data?.message || "Failed to submit assignment");
-      throw error; // Re-throw to let modal handle loading state
+
+      if (res?.data?.data?.id) {
+        toast.success("Assignment Submitted successfully!");
+      } else {
+        toast.error("Submission already exists for this assignment");
+      }
+    } catch (error) {
+      toast.error("Failed to submit assignment.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -175,12 +186,22 @@ export default function AssignmentPage() {
                     variant="outline"
                     size="lg"
                     onClick={() => handleSubmitClick(assignment)}
-                    disabled={isDeadlinePassed || !assignment.isAvailable}
+                    disabled={
+                      isDeadlinePassed ||
+                      !assignment.isAvailable ||
+                      isInstructor
+                    }
                     className={
-                      isDeadlinePassed ? "opacity-50 cursor-not-allowed" : ""
+                      isDeadlinePassed || isInstructor
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }
                   >
-                    {isDeadlinePassed ? "Deadline Passed" : "Submit"}
+                    {isInstructor
+                      ? "Instructors Cannot Submit"
+                      : isDeadlinePassed
+                      ? "Deadline Passed"
+                      : "Submit"}
                   </Button>
                 </CardContent>
               </Card>
@@ -200,6 +221,7 @@ export default function AssignmentPage() {
         assignmentTitle={selectedAssignment?.title || ""}
         onClose={handleCloseModal}
         onSubmit={handleSubmitAssignment}
+        loading={loading}
       />
     </>
   );

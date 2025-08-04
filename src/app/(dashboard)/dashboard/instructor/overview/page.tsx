@@ -2,20 +2,24 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { useGetSubmissionStatusCountsQuery } from "@/redux/api/submissionApi";
-// Adjust this API hook to match your data source
-// Example API: should return { pending: number, accepted: number, rejected: number }
 
 const COLORS = ["#facc15", "#22c55e", "#ef4444"];
 
-const AdminDashboardOverviewPage = () => {
-  const { data, isLoading } = useGetSubmissionStatusCountsQuery({}) as {
-    data?: { pending: number; accepted: number; rejected: number };
-    isLoading: boolean;
-  };
-
-  console.log(data);
+const InstructorDashboardOverviewPage = () => {
+  const { data: apiResponse, isLoading } = useGetSubmissionStatusCountsQuery(
+    {}
+  );
+  // Extract counts safely
+  const counts = apiResponse?.data || { pending: 0, accepted: 0, rejected: 0 };
 
   if (isLoading) {
     return (
@@ -25,17 +29,18 @@ const AdminDashboardOverviewPage = () => {
     );
   }
 
+  // Prepare chart data
   const statusData = [
-    { name: "Pending", value: data?.pending ?? 0 },
-    { name: "Accepted", value: data?.accepted ?? 0 },
-    { name: "Rejected", value: data?.rejected ?? 0 },
+    { name: "Pending", value: counts.pending },
+    { name: "Accepted", value: counts.accepted },
+    { name: "Rejected", value: counts.rejected },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex justify-center items-center">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Status Overview</CardTitle>
+          <CardTitle>Submission Status Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={350}>
@@ -53,6 +58,7 @@ const AdminDashboardOverviewPage = () => {
                 ))}
               </Pie>
               <Tooltip />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>
@@ -61,4 +67,4 @@ const AdminDashboardOverviewPage = () => {
   );
 };
 
-export default AdminDashboardOverviewPage;
+export default InstructorDashboardOverviewPage;

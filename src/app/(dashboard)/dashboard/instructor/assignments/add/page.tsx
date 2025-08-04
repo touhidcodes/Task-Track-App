@@ -34,7 +34,6 @@ const CreateAssignmentPage = () => {
       };
 
       const res = await createAssignment(assignmentData);
-      console.log(res);
 
       if (res?.data?.data?.id) {
         toast.success("Assignment created successfully!");

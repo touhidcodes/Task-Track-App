@@ -9,7 +9,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { MoreHorizontal, Pencil, Trash, Home } from "lucide-react";
+import { MoreHorizontal, MessageSquare, Home } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,19 +40,19 @@ import { TSubmissionWithStudent } from "@/types/submission";
 interface SubmissionCardTableProps {
   submissions: TSubmissionWithStudent[];
   isLoading: boolean;
-  onUpdateClick?: (submission: TSubmissionWithStudent) => void;
+  onFeedbackClick?: (submission: TSubmissionWithStudent) => void;
   paginationData: TPaginationData;
   onPageChange: (page: number) => void;
   onItemsPerPageChange: (itemsPerPage: number) => void;
 }
 
-const DashboardSubmissionTable = ({
+const DashboardSubmissionFeedbackTable = ({
   submissions,
   isLoading,
   paginationData,
   onPageChange,
   onItemsPerPageChange,
-  onUpdateClick,
+  onFeedbackClick,
 }: SubmissionCardTableProps) => {
   const { currentPage, totalPages, totalItems, itemsPerPage, start, end } =
     paginationData;
@@ -93,10 +93,11 @@ const DashboardSubmissionTable = ({
         {submissions.length ? (
           <Table>
             <TableHeader>
-              <TableRow className="[&>*]:whitespace-nowrap sticky top-0 bg-background after:content-[''] after:inset-x-0 after:h-px after:bg-border after:absolute after:bottom-0 z-10">
+              <TableRow className="[&>*]:whitespace-nowrap sticky top-0 bg-background z-10">
                 <TableHead className="pl-6">Assignment</TableHead>
                 <TableHead className="text-center">Submission URL</TableHead>
                 <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -132,15 +133,36 @@ const DashboardSubmissionTable = ({
                       {submission.status}
                     </Badge>
                   </TableCell>
+                  <TableCell className="text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+                        <DropdownMenuItem
+                          onClick={() =>
+                            onFeedbackClick && onFeedbackClick(submission)
+                          }
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          {submission.feedback
+                            ? "Update Feedback"
+                            : "Provide Feedback"}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         ) : (
           <div className="text-center py-10 bg-slate-100 rounded-lg shadow-sm">
-            <div className="flex justify-center mb-2">
-              <Home className="w-10 h-10 text-muted-foreground" />
-            </div>
+            <Home className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
             <h3 className="text-lg font-semibold text-muted-foreground">
               No Submissions Found
             </h3>
@@ -161,27 +183,18 @@ const DashboardSubmissionTable = ({
                   onClick={() =>
                     currentPage > 1 && onPageChange(currentPage - 1)
                   }
-                  className={`transition-all duration-200 ${
-                    currentPage === 1
-                      ? "pointer-events-none opacity-50 cursor-not-allowed"
-                      : "bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
-                  }`}
+                  className={currentPage === 1 ? "opacity-50" : ""}
                 />
               </PaginationItem>
-              <PaginationItem className="px-4 flex items-center text-sm text-gray-700">
-                Page <span className="mx-1 font-semibold">{currentPage}</span>{" "}
-                of <span className="ml-1 font-semibold">{totalPages}</span>
+              <PaginationItem className="px-4">
+                Page {currentPage} of {totalPages}
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext
                   onClick={() =>
                     currentPage < totalPages && onPageChange(currentPage + 1)
                   }
-                  className={`transition-all duration-200 ${
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50 cursor-not-allowed"
-                      : "bg-slate-800 text-white hover:bg-slate-700 cursor-pointer"
-                  }`}
+                  className={currentPage === totalPages ? "opacity-50" : ""}
                 />
               </PaginationItem>
             </PaginationContent>
@@ -192,4 +205,4 @@ const DashboardSubmissionTable = ({
   );
 };
 
-export default DashboardSubmissionTable;
+export default DashboardSubmissionFeedbackTable;

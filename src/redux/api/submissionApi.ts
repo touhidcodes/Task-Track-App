@@ -2,21 +2,11 @@ import { tagTypes } from "../tags";
 import { baseApi } from "./baseApi";
 
 export const submissionApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    // Create submission (Student)
-    createSubmission: builder.mutation({
-      query: (submissionData) => ({
-        url: "/submissions",
-        method: "POST",
-        body: submissionData,
-      }),
-      invalidatesTags: [tagTypes.submission],
-    }),
-
+  endpoints: (build) => ({
     // Get all submissions (Instructor/Admin/Student)
-    getAllSubmissions: builder.query({
+    getAllSubmissions: build.query({
       query: (params) => ({
-        url: "/submissions",
+        url: `/submissions?${params}`,
         method: "GET",
         params,
       }),
@@ -24,7 +14,7 @@ export const submissionApi = baseApi.injectEndpoints({
     }),
 
     // Get single submission
-    getSubmissionById: builder.query({
+    getSubmissionById: build.query({
       query: (id) => ({
         url: `/submissions/${id}`,
         method: "GET",
@@ -32,8 +22,17 @@ export const submissionApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.submission],
     }),
 
+    // Get student  submissions
+    getStudentSubmissions: build.query({
+      query: () => ({
+        url: `/submissions/student`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.submission],
+    }),
+
     // Get single submission count
-    getSubmissionStatusCounts: builder.query({
+    getSubmissionStatusCounts: build.query({
       query: () => ({
         url: `/submissions/status`,
         method: "GET",
@@ -41,18 +40,37 @@ export const submissionApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.submission],
     }),
 
+    // Get single submission count students
+    getStudentSubmissionStatusCounts: build.query({
+      query: () => ({
+        url: `/submissions/status-student`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.submission],
+    }),
+
+    // Create submission (Student)
+    createSubmission: build.mutation({
+      query: (submissionData) => ({
+        url: "/submissions/create",
+        method: "POST",
+        data: submissionData,
+      }),
+      invalidatesTags: [tagTypes.submission],
+    }),
+
     // Update submission (Resubmit / Feedback)
-    updateSubmission: builder.mutation({
+    updateSubmission: build.mutation({
       query: ({ id, ...updateData }) => ({
         url: `/submissions/${id}`,
         method: "PATCH",
-        body: updateData,
+        data: updateData,
       }),
       invalidatesTags: [tagTypes.submission],
     }),
 
     // Delete submission
-    deleteSubmission: builder.mutation({
+    deleteSubmission: build.mutation({
       query: (id) => ({
         url: `/submissions/${id}`,
         method: "DELETE",
@@ -63,10 +81,12 @@ export const submissionApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useCreateSubmissionMutation,
   useGetAllSubmissionsQuery,
+  useGetStudentSubmissionsQuery,
   useGetSubmissionStatusCountsQuery,
+  useGetStudentSubmissionStatusCountsQuery,
   useGetSubmissionByIdQuery,
+  useCreateSubmissionMutation,
   useUpdateSubmissionMutation,
   useDeleteSubmissionMutation,
 } = submissionApi;

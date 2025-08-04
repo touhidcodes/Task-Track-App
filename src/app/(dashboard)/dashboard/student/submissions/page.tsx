@@ -3,19 +3,13 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { SlidersHorizontal, Search } from "lucide-react";
-import { toast } from "sonner";
 import { FieldValues } from "react-hook-form";
-import {
-  useGetAllSubmissionsQuery,
-  useUpdateSubmissionMutation,
-} from "@/redux/api/submissionApi";
-import DashboardSubmissionFeedbackTable from "@/components/custom/Table/DashboardSubmissionFeedbackTable";
-import { TSubmissionWithStudent } from "@/types/submission";
+import { useGetStudentSubmissionsQuery } from "@/redux/api/submissionApi";
+import DashboardSubmissionTable from "@/components/custom/Table/DashboardSubmissionTable";
 import DashboardSearchBarSkeleton from "@/components/custom/Skeleton/DashboardSearchBarSkeleton";
 import FormContainer from "@/components/custom/Forms/FormContainer";
 import FormInput from "@/components/custom/Forms/FormInput";
 import FormSelect from "@/components/custom/Forms/FormSelect";
-import SubmissionFeedbackModal from "@/components/custom/Modal/SubmissionFeedbackModal";
 
 interface FilterFormValues {
   searchTerm: string;
@@ -42,31 +36,27 @@ const sortOptions = [
   { label: "Title Z-A", value: "title-za" },
 ];
 
-const DashboardSubmissionsPage = () => {
+const StudentSubmissionsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filters, setFilters] = useState<FieldValues>(defaultFilters);
 
-  // Feedback modal
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [selectedFeedbackSubmission, setSelectedFeedbackSubmission] =
-    useState<TSubmissionWithStudent | null>(null);
+  // Build query params dynamically
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set("page", currentPage.toString());
+    params.set("limit", itemsPerPage.toString());
 
-  const queryParams = useMemo(
-    () => ({
-      page: currentPage,
-      limit: itemsPerPage,
-      searchTerm: filters.searchTerm || undefined,
-      status: filters.status || undefined,
-      sortBy: filters.sortBy || undefined,
-    }),
-    [currentPage, itemsPerPage, filters]
-  );
+    if (filters.searchTerm) params.set("searchTerm", filters.searchTerm);
+    if (filters.status) params.set("status", filters.status);
+    if (filters.sortBy) params.set("sortBy", filters.sortBy);
 
-  const { data, isLoading } = useGetAllSubmissionsQuery(queryParams);
-  const [updateSubmission] = useUpdateSubmissionMutation();
+    return params.toString();
+  }, [currentPage, itemsPerPage, filters]);
 
-  const submissions = data?.data?.data || [];
+  const { data, isLoading } = useGetStudentSubmissionsQuery(queryParams);
+
+  const submissions = data?.data || [];
   const totalItems = data?.meta?.total ?? 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const start = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
@@ -81,7 +71,6 @@ const DashboardSubmissionsPage = () => {
     end,
   };
 
-  // Filter Handlers
   const handleSubmitSearch = (values: FieldValues) => {
     setFilters(values);
     setCurrentPage(1);
@@ -93,45 +82,14 @@ const DashboardSubmissionsPage = () => {
     setCurrentPage(1);
   };
 
-  // Pagination handlers
   const handlePageChange = (page: number) => setCurrentPage(page);
   const handleItemsPerPageChange = (value: number) => setItemsPerPage(value);
-
-  // Feedback handler
-  const handleSaveFeedback = async (
-    feedbackData: FieldValues,
-    submissionId: string
-  ) => {
-    try {
-      const res = await updateSubmission({
-        id: submissionId,
-        feedback: feedbackData.feedback,
-        status: feedbackData.status,
-      });
-
-      if (res.data?.data?.id) {
-        toast.success("Feedback saved successfully!");
-        setIsFeedbackModalOpen(false);
-      } else {
-        toast.error("Failed to save feedback.");
-      }
-    } catch (err) {
-      console.error("Error saving feedback", err);
-      toast.error("Error saving feedback.");
-    }
-  };
-
-  // Modal handlers
-  const handleFeedbackClick = (submission: TSubmissionWithStudent) => {
-    setSelectedFeedbackSubmission(submission);
-    setIsFeedbackModalOpen(true);
-  };
 
   return (
     <div className="space-y-6 mt-2">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">All Submissions</h2>
+        <h2 className="text-xl font-semibold">My Submissions</h2>
         <div className="hidden md:block text-sm text-gray-600">
           Total Submissions: {totalItems}
         </div>
@@ -204,24 +162,15 @@ const DashboardSubmissionsPage = () => {
       )}
 
       {/* Table */}
-      <DashboardSubmissionFeedbackTable
+      <DashboardSubmissionTable
         submissions={submissions}
         isLoading={isLoading}
         paginationData={paginationData}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
-        onFeedbackClick={handleFeedbackClick}
-      />
-
-      {/* Modals */}
-      <SubmissionFeedbackModal
-        open={isFeedbackModalOpen}
-        submission={selectedFeedbackSubmission}
-        onClose={() => setIsFeedbackModalOpen(false)}
-        onSave={handleSaveFeedback}
       />
     </div>
   );
 };
 
-export default DashboardSubmissionsPage;
+export default StudentSubmissionsPage;
